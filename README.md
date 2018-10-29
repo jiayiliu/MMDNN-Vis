@@ -14,6 +14,12 @@ mmtoir -f cntk -n AlexNet_ImageNet_CNTK.model -d ir_alexnet
 
 Refer [here](https://gist.github.com/cobyism/4730490)
 
+Do it after commit changes.
+
 `git subtree push --prefix src origin gh-pages`
+
+### local development
+
+`node app.js`
 
 ## Roadmap

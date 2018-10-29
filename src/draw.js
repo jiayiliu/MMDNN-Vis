@@ -1,5 +1,5 @@
 let json;
-const nodeW = 150, nodeH = 30;
+const nodeW = 150, nodeH = 20, shiftH=5;
 const filePath = "model.json";
 const miniW = window.innerWidth * 0.12
 const miniH = (window.innerHeight-85) * 0.98
@@ -18,15 +18,21 @@ const handleFileSelect = (evt) => {
     reader.readAsText(file)
 }
 
+window.onload = () => {
+    var rt = new XMLHttpRequest();
+    rt.overrideMimeType("application/json");
+    rt.open("GET", "assets/demo.json", true);
+    rt.onreadystatechange = () => {
+        if (rt.readyState == 4 && rt.status=="200") {
+            draw(JSON.parse(rt.responseText));
+        }
+    }
+    rt.send(null);
+}
+
+
 document.getElementById('importModel').addEventListener('change', handleFileSelect, false);
-//default, draw the model.json file
-// window.onload = () => {
-//     d3.json(filePath, (error, json) => {
-//         if (error) throw error;
-//         // console.info(json)
-//         draw(json)
-//     })
-// }
+
 function reverse(){
     rankBT = !rankBT;
     draw(json)
@@ -86,7 +92,7 @@ const arrows = (points) => {
 }
 
 const OPs = []
-const COLORs = d3.schemeCategory20
+const COLORs = d3.schemeCategory10
 
 // select a layer
 const selectLayer = (layer, info, mode) => {
@@ -162,26 +168,6 @@ const draw = (json) => {
         .attr("class", "arrowHead")
         .style('fill', '#aaa')
 
-    // var filter = def.append("filter")
-    //     .attr("id", "dropshadow")
-
-    // filter.append("feGaussianBlur")
-    //     .attr("in", "SourceAlpha")
-    //     .attr("stdDeviation", 4)
-    //     .attr("result", "blur");
-    // // filter.append("feOffset")
-    // //     .attr("in", "blur")
-    // //     .attr("dx", 2)
-    // //     .attr("dy", 2)
-    // //     .attr("result", "offsetBlur");
-
-    // var feMerge = filter.append("feMerge");
-
-    // feMerge.append("feMergeNode")
-    //     .attr("in", "offsetBlur")
-    // feMerge.append("feMergeNode")
-    //     .attr("in", "SourceGraphic");
-
     let shiftMargin = svg.append('g')
     .attr('class', 'shiftMargin')
     .attr("transform", `translate(${window.innerWidth*(0.15) }, 0) scale(1)`)
@@ -202,9 +188,7 @@ const draw = (json) => {
         .attr("width", d => 1.2*d.width)
         .attr("height", 1.2*nodeH)
         .attr('id', d => d.label.split(':')[0].split('/').join('_'))
-        // .attr('rx', nodeH / 5)
-        // .attr('ry', nodeH / 5)
-        .attr("transform", d => { return `translate( ${-d.width * 0.6},${-nodeH * 0.6})` })
+        .attr("transform", d => { return `translate( ${-d.width * 0.6},${-nodeH * 0.6 - shiftH})` })
         .style("fill", "transparent")
         .style("stroke", "none")
         .on("mousedown", function (d) {
@@ -353,6 +337,7 @@ function transformParser(string) {
     return { k, x, y }
 }
 
+//  Build the Graph
 const buildGraph = (g2, nodes, edges, label=true) => {
 
     let drawNode = g2.selectAll(".node")
@@ -366,9 +351,7 @@ const buildGraph = (g2, nodes, edges, label=true) => {
         .attr('class', 'layers')
         .attr("width", d => (d.width))
         .attr("height", nodeH)
-        // .attr('rx', nodeH / 5)
-        // .attr('ry', nodeH / 5)
-        .attr("transform", d => { return `translate( ${-d.width * 0.5},${-nodeH * 0.5})` })
+        .attr("transform", d => { return `translate( ${-d.width * 0.5},${-nodeH * 0.5 - shiftH})` })
         .style("fill", d => {
             let op = d.label.split(':').pop()
             return getColor(op)
