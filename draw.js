@@ -12,8 +12,8 @@ const handleFileSelect = (evt) => {
     let reader = new FileReader()
     reader.onload = e => {
         // console.info(JSON.parse(e.target.result))
-        draw(JSON.parse(e.target.result))
-        json = JSON.parse(e.target.result)
+        json = JSON.parse(e.target.result);
+        draw(json)
     }
     reader.readAsText(file)
 }
@@ -24,12 +24,12 @@ window.onload = () => {
     rt.open("GET", "assets/demo.json", true);
     rt.onreadystatechange = () => {
         if (rt.readyState == 4 && rt.status=="200") {
-            draw(JSON.parse(rt.responseText));
+            json = JSON.parse(rt.responseText)
+            draw(json);
         }
     }
     rt.send(null);
 }
-
 
 document.getElementById('importModel').addEventListener('change', handleFileSelect, false);
 
@@ -80,9 +80,9 @@ const arrows = (points) => {
     let vias = [];
     for (let i = 0; i < len - 2; i += 2) {
         let cPath;
-        cPath = [...Array(3).keys()].map(k => `${points[i + k].x} ${points[i + k].y}`)
+        cPath = [...Array(3).keys()].map(k => `${points[i + k].x} ${points[i + k].y - shiftH}`)
         cPath = 'C'.concat(cPath)
-        vias.push(`M ${points[i].x} ${points[i].y} ${cPath}`)
+        vias.push(`M ${points[i].x} ${points[i].y-4} ${cPath}`)
     }
     vias = vias.join(' ')
     // let arrowL = `M ${points[len - 1].x} ${points[len - 1].y} l -7 -7`
